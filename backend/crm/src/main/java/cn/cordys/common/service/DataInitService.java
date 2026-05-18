@@ -129,10 +129,30 @@ public class DataInitService {
         formWrapper.eq(ModuleForm::getFormKey, FormKey.CUSTOMER.getKey());
         List<ModuleForm> forms = moduleFormMapper.selectListByLambda(formWrapper);
         for (ModuleForm form : forms) {
-            LambdaQueryWrapper<ModuleField> fieldWrapper = new LambdaQueryWrapper<>();
-            fieldWrapper.eq(ModuleField::getFormId, form.getId())
-                    .in(ModuleField::getInternalKey, List.of("country", "customerCountry"));
-            if (CollectionUtils.isNotEmpty(moduleFieldMapper.selectListByLambda(fieldWrapper))) {
+            LambdaQueryWrapper<ModuleField> countryWrapper = new LambdaQueryWrapper<>();
+            countryWrapper.eq(ModuleField::getFormId, form.getId())
+                    .eq(ModuleField::getInternalKey, "country");
+            if (CollectionUtils.isNotEmpty(moduleFieldMapper.selectListByLambda(countryWrapper))) {
+                continue;
+            }
+
+            LambdaQueryWrapper<ModuleField> legacyWrapper = new LambdaQueryWrapper<>();
+            legacyWrapper.eq(ModuleField::getFormId, form.getId())
+                    .eq(ModuleField::getInternalKey, "customerCountry");
+            List<ModuleField> legacyFields = moduleFieldMapper.selectListByLambda(legacyWrapper);
+            if (CollectionUtils.isNotEmpty(legacyFields)) {
+                ModuleField legacyField = legacyFields.getFirst();
+                legacyField.setInternalKey("country");
+                legacyField.setType("INPUT");
+                legacyField.setMobile(true);
+                legacyField.setUpdateUser("admin");
+                legacyField.setUpdateTime(System.currentTimeMillis());
+                moduleFieldMapper.updateById(legacyField);
+
+                ModuleFieldBlob fieldBlob = new ModuleFieldBlob();
+                fieldBlob.setId(legacyField.getId());
+                fieldBlob.setProp(JSON.toJSONString(customerCountryFieldProp(legacyField.getId())));
+                moduleFieldBlobMapper.updateById(fieldBlob);
                 continue;
             }
 
