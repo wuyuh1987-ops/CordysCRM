@@ -23,8 +23,6 @@ import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -70,7 +68,7 @@ public class DataInitService {
             initOneTime(moduleFormService::initUpgradeForm, "init.upgrade.form.v1.5.1");
             initOneTime(moduleFormService::initExtFieldsByVer, "1.5.0", "init.ext.fields.v1.5.0");
             initOneTime(moduleFormService::initExtFieldsByVer, "1.5.1", "init.ext.fields.v1.5.1");
-            initOneTime(this::initCustomerCountryField, "init.customer.country.field.v1.7.1");
+            initOneTime(this::initCustomerCountryField, "init.customer.country.field.v1.7.2");
             initOneTime(moduleFieldExtService::setDefaultOptionSource, "set.default.option.source");
             initOneTime(moduleFieldExtService::refreshPlanFieldPos, "refresh.plan.field.pos");
             initOneTime(moduleFormService::initInvoiceFormScenarioProp, "init.invoice.form.scenario");
@@ -133,7 +131,7 @@ public class DataInitService {
         for (ModuleForm form : forms) {
             LambdaQueryWrapper<ModuleField> fieldWrapper = new LambdaQueryWrapper<>();
             fieldWrapper.eq(ModuleField::getFormId, form.getId())
-                    .eq(ModuleField::getInternalKey, "customerCountry");
+                    .in(ModuleField::getInternalKey, List.of("country", "customerCountry"));
             if (CollectionUtils.isNotEmpty(moduleFieldMapper.selectListByLambda(fieldWrapper))) {
                 continue;
             }
@@ -141,10 +139,10 @@ public class DataInitService {
             ModuleField field = new ModuleField();
             field.setId(IDGenerator.nextStr());
             field.setFormId(form.getId());
-            field.setInternalKey("customerCountry");
+            field.setInternalKey("country");
             field.setName("\u56fd\u5bb6");
-            field.setType("RADIO");
-            field.setMobile(false);
+            field.setType("INPUT");
+            field.setMobile(true);
             field.setPos(System.currentTimeMillis());
             field.setCreateUser("admin");
             field.setCreateTime(System.currentTimeMillis());
@@ -160,31 +158,16 @@ public class DataInitService {
     }
 
     private Map<String, Object> customerCountryFieldProp(String fieldId) {
-        Map<String, Object> prop = new LinkedHashMap<>();
-        prop.put("id", fieldId);
-        prop.put("name", "\u56fd\u5bb6");
-        prop.put("internalKey", "customerCountry");
-        prop.put("type", "RADIO");
-        prop.put("showLabel", true);
-        prop.put("readable", true);
-        prop.put("editable", true);
-        prop.put("fieldWidth", 1);
-        prop.put("rules", List.of(Map.of("key", "required")));
-        prop.put("options", countryOptions());
-        return prop;
-    }
-
-    private List<Map<String, String>> countryOptions() {
-        List<Map<String, String>> options = new ArrayList<>();
-        options.add(Map.of("label", "\u4e2d\u56fd", "value", "CN"));
-        options.add(Map.of("label", "\u7f8e\u56fd", "value", "US"));
-        options.add(Map.of("label", "\u65e5\u672c", "value", "JP"));
-        options.add(Map.of("label", "\u97e9\u56fd", "value", "KR"));
-        options.add(Map.of("label", "\u65b0\u52a0\u5761", "value", "SG"));
-        options.add(Map.of("label", "\u5fb7\u56fd", "value", "DE"));
-        options.add(Map.of("label", "\u82f1\u56fd", "value", "GB"));
-        options.add(Map.of("label", "\u6cd5\u56fd", "value", "FR"));
-        options.add(Map.of("label", "\u5176\u4ed6", "value", "OTHER"));
-        return options;
+        return Map.of(
+                "id", fieldId,
+                "name", "\u56fd\u5bb6",
+                "internalKey", "country",
+                "type", "INPUT",
+                "showLabel", true,
+                "readable", true,
+                "editable", true,
+                "fieldWidth", 1,
+                "mobile", true
+        );
     }
 }
