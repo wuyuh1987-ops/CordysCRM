@@ -42,4 +42,7 @@ public class Customer extends BaseModel {
 
     @Schema(description = "公海原因ID")
     private String reasonId;
+
+    @Schema(description = "国家")
+    private String country;
 }
