@@ -87,4 +87,7 @@ public class CustomerListResponse {
 
     @Schema(description = "协作类型(只读/协作),为空则不是协作人员")
     private String collaborationType;
+
+    @Schema(description = "国家")
+    private String country;
 }

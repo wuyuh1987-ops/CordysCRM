@@ -220,6 +220,16 @@
           "key": "required"
         }
       ]
+    },
+    {
+      "name": "国家",
+      "internalKey": "country",
+      "type": "INPUT",
+      "showLabel": true,
+      "readable": true,
+      "editable": true,
+      "fieldWidth": 1,
+      "mobile": true
     }
   ],
   "clue": [

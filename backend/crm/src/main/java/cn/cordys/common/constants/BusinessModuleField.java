@@ -27,6 +27,10 @@ public enum BusinessModuleField {
      * 负责人
      */
     CUSTOMER_OWNER("customerOwner", "owner", Set.of("rules.required", "mobile", "readable"), FormKey.CUSTOMER.getKey()),
+    /**
+     * 国家
+     */
+    CUSTOMER_COUNTRY("country", "country", Set.of("mobile", "readable"), FormKey.CUSTOMER.getKey()),
     /*------ end: CUSTOMER ------*/
 
     /*------ start: CLUE ------*/
@@ -241,7 +245,7 @@ public enum BusinessModuleField {
 
     /*------ start: CONTRACT ------*/
     /**
-     * 合同名稱
+     * 合同名称
      */
     CONTRACT_NAME("contractName", "name", Set.of("rules.required", "mobile", "readable"), FormKey.CONTRACT.getKey()),
 
