@@ -5,6 +5,7 @@ export interface SaveCustomerParams {
   name?: string;
   owner: string; // 负责人
   moduleFields?: ModuleField[];
+  country?: string; // 国家
 }
 
 export interface UpdateCustomerParams extends SaveCustomerParams {
@@ -33,6 +34,7 @@ export interface CustomerListItem {
   collectionTime: number;
   reservedDays: number; // 剩余归属天数
   moduleFields: ModuleField[];
+    country?: string; // 国家
 }
 
 export interface CustomerDetail {
