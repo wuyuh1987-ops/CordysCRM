@@ -34,4 +34,7 @@ public class CustomerUpdateRequest {
 
 
     private Boolean agentInvoke = false;
+
+    @Schema(description = "国家")
+    private String country;
 }
